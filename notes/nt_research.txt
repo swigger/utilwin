@@ -1,0 +1,15 @@
+nt links:
+
+reactos ndk => ndk
+http://code.google.com/p/native-nt-toolkit/  inactive project with a ndk that have a same root (but missing from internet) as reactos ndk.
+
+http://code.google.com/p/ontl/  open nt native template library.
+
+
+wrk source code (has a sdk). wine src, windows 2k leaked src, reactos src.
+
+http://processhacker.sourceforge.net/ might have some intersting code.
+
+------------
+https://github.com/processhacker/processhacker
+best src?

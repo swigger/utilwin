@@ -1,0 +1,7 @@
+*.obj
+*.lib
+*.pdb
+*.exe
+*.tar.xz
+*.tar.gz
+*.tar.bz2

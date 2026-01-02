@@ -1,0 +1,59 @@
+# vim: set ft=make:
+C_SRC=bind.c callback.c colors.c compat.c complete.c display.c funmap.c histexpand.c histfile.c history.c histsearch.c input.c isearch.c keymaps.c kill.c macro.c mbutil.c misc.c nls.c parens.c parse-colors.c readline.c rltty.c search.c shell.c signals.c terminal.c text.c tilde.c undo.c util.c vi_mode.c xfree.c xmalloc.c
+INDIR?=readline
+DEBUG?=0
+CXX_SRC=compats.cpp
+CFLAGS=/FS /Oi /O2 /GL /GF /Zi /Imysrc /I$(INDIR) /DHAVE_CONFIG_H $(CFLAGS1) $(VCPKG_INC)
+CXXFLAGS=$(CFLAGS) /EHsc /std:c++20
+
+OBJS=$(patsubst %,obj/%.obj,$(C_SRC)) $(patsubst %,obj/%.obj,$(CXX_SRC))
+VCPKGBASE:=$(wildcard $(shell Get-Content $$Env:LocalAppData/vcpkg/vcpkg.path.txt))
+VCPKG_INC=/I$(VCPKGBASE)/installed/x64-windows-static/include /I$(VCPKGBASE)/installed/x64-windows/include
+VCPKG_LIB=/LIBPATH:$(VCPKGBASE)/installed/x64-windows-static/lib /LIBPATH:$(VCPKGBASE)/installed/x64-windows/lib
+
+ifeq ($(DEBUG),1)
+CFLAGS1=/MDd /D_DEBUG /DDEBUG
+LDFLAGS1=/nodefaultlib:MSVCRT
+else
+CFLAGS1=/MD
+LDFLAGS1=
+endif
+
+all: readline.lib test_rl.exe
+
+readline.lib:$(OBJS)
+	lib /nologo /out:$@ $(OBJS)
+
+test_rl.exe:obj/main.cpp.obj readline.lib
+	link /nologo /LTCG /out:$@ $< readline.lib $(VCPKG_LIB) utilwin.lib user32.lib ntdll.lib $(LDFLAGS1)
+
+obj:
+	-@mkdir $@
+
+obj/%.c.obj:$(INDIR)/%.c|obj
+	cl /nologo /c $(CFLAGS) /Fo$@ $<
+
+obj/%.cpp.obj:mysrc/%.cpp|obj
+	cl /nologo /c $(CXXFLAGS) /Fo$@ $<
+
+obj/%.cpp.obj:test_src/%.cpp|obj
+	cl /nologo /EHsc /FS /MD /Zi /c /I. /Fo$@ $<
+
+clean:
+	-@rd /s /q obj
+	-@del *.exe *.lib *.pdb
+
+
+DESTDIR=D:\dev.down\myext
+
+install:
+	-$$nullout = New-Item -ItemType Directory -Force -Path $(DESTDIR)/include/readline/
+	cp readline/readline.h $(DESTDIR)/include/readline
+	cp readline/rlstdc.h $(DESTDIR)/include/readline
+	cp readline/rltypedefs.h $(DESTDIR)/include/readline
+	cp readline/keymaps.h $(DESTDIR)/include/readline
+	cp readline/tilde.h $(DESTDIR)/include/readline
+	cp readline/chardefs.h $(DESTDIR)/include/readline
+	cp readline/history.h $(DESTDIR)/include/readline
+	cp readline.lib $(DESTDIR)/debug_lib/
+	cp readline.lib $(DESTDIR)/release_lib/

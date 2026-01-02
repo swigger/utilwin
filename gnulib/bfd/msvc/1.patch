@@ -1,0 +1,154 @@
+diff --git a/bfd/coff-aarch64.c b/bfd/coff-aarch64.c
+index 825963c0..1578bca6 100644
+--- a/bfd/coff-aarch64.c
++++ b/bfd/coff-aarch64.c
+@@ -58,7 +58,7 @@ coff_aarch64_rel21_reloc (bfd *abfd,
+ 				  input_section, reloc_entry->address))
+     return bfd_reloc_outofrange;
+ 
+-  uint32_t op = bfd_getl32 (data + reloc_entry->address);
++  uint32_t op = bfd_getl32 ((char*)data + reloc_entry->address);
+   bfd_vma relocation = reloc_entry->addend;
+   bfd_reloc_status_type ret = bfd_reloc_ok;
+   if (output_bfd == NULL)
+@@ -87,7 +87,7 @@ coff_aarch64_rel21_reloc (bfd *abfd,
+   op |= (relocation & 0x1ffffc) << 3;
+   op |= (relocation & 0x3) << 29;
+ 
+-  bfd_putl32 (op, data + reloc_entry->address);
++  bfd_putl32 (op, (char*)data + reloc_entry->address);
+ 
+   return ret;
+ }
+@@ -108,7 +108,7 @@ coff_aarch64_po12l_reloc (bfd *abfd,
+ 				  input_section, reloc_entry->address))
+     return bfd_reloc_outofrange;
+ 
+-  uint32_t op = bfd_getl32 (data + reloc_entry->address);
++  uint32_t op = bfd_getl32 ((char*)data + reloc_entry->address);
+   bfd_vma relocation = reloc_entry->addend & 0xfff;
+   int shift;
+ 
+@@ -146,7 +146,7 @@ coff_aarch64_po12l_reloc (bfd *abfd,
+   op &= 0xffc003ff;
+   op |= (relocation >> shift << 10) & 0x3ffc00;
+ 
+-  bfd_putl32 (op, data + reloc_entry->address);
++  bfd_putl32 (op, (char*)data + reloc_entry->address);
+ 
+   return ret;
+ }
+@@ -180,7 +180,7 @@ coff_aarch64_addr32nb_reloc (bfd *abfd,
+ 	relocation += (symbol->value
+ 		       + symbol->section->output_offset
+ 		       + symbol->section->output_section->vma);
+-      bfd_vma addend = bfd_getl_signed_32 (data + reloc_entry->address);
++      bfd_vma addend = bfd_getl_signed_32 ((char*)data + reloc_entry->address);
+       relocation += addend;
+       bfd *obfd = input_section->output_section->owner;
+       if (bfd_get_flavour (obfd) == bfd_target_coff_flavour
+@@ -196,7 +196,7 @@ coff_aarch64_addr32nb_reloc (bfd *abfd,
+   if (relocation + 0x80000000 > 0xffffffff)
+     ret = bfd_reloc_overflow;
+ 
+-  bfd_putl32 (relocation, data + reloc_entry->address);
++  bfd_putl32 (relocation, (char*)data + reloc_entry->address);
+ 
+   return ret;
+ }
+@@ -229,13 +229,13 @@ coff_aarch64_secrel_reloc (bfd *abfd,
+       else if (!bfd_is_com_section (symbol->section))
+ 	relocation += (symbol->value
+ 		       + symbol->section->output_offset);
+-      bfd_vma addend = bfd_getl_signed_32 (data + reloc_entry->address);
++      bfd_vma addend = bfd_getl_signed_32 ((char*)data + reloc_entry->address);
+       relocation += addend;
+     }
+   if (relocation > 0xffffffff)
+     ret = bfd_reloc_overflow;
+ 
+-  bfd_putl32 (relocation, data + reloc_entry->address);
++  bfd_putl32 (relocation, (char*)data + reloc_entry->address);
+ 
+   return ret;
+ }
+diff --git a/bfd/xcofflink.c b/bfd/xcofflink.c
+index 6ef9abcd..62e9def7 100644
+--- a/bfd/xcofflink.c
++++ b/bfd/xcofflink.c
+@@ -4821,7 +4821,7 @@ bfd_xcoff_size_stubs (struct bfd_link_info *info)
+ 			}
+ 
+ 		      bfd_coff_swap_sym_in (input_bfd,
+-					    (void *) esyms + irel->r_symndx * symesz,
++					    (char*) esyms + irel->r_symndx * symesz,
+ 					    (void *) &sym);
+ 
+ 		      sym_sec = xcoff_data (input_bfd)->csects[irel->r_symndx];
+diff --git a/bfd/xsym.c b/bfd/xsym.c
+index 887272a5..28668620 100644
+--- a/bfd/xsym.c
++++ b/bfd/xsym.c
+@@ -882,7 +882,7 @@ bfd_sym_fetch_contained_types_table_entry (bfd *abfd,
+   void (*parser) (unsigned char *, size_t, bfd_sym_contained_types_table_entry *);
+   unsigned long offset;
+   unsigned long entry_size = 0;
+-  unsigned char buf[0];
++  unsigned char buf[4];
+   bfd_sym_data_struct *sdata = NULL;
+ 
+   parser = NULL;
+@@ -932,7 +932,7 @@ bfd_sym_fetch_file_references_index_table_entry (bfd *abfd,
+   void (*parser) (unsigned char *, size_t, bfd_sym_file_references_index_table_entry *);
+   unsigned long offset;
+   unsigned long entry_size = 0;
+-  unsigned char buf[0];
++  unsigned char buf[4];
+   bfd_sym_data_struct *sdata = NULL;
+ 
+   parser = NULL;
+@@ -982,7 +982,7 @@ bfd_sym_fetch_constant_pool_entry (bfd *abfd,
+   void (*parser) (unsigned char *, size_t, bfd_sym_constant_pool_entry *);
+   unsigned long offset;
+   unsigned long entry_size = 0;
+-  unsigned char buf[0];
++  unsigned char buf[4];
+   bfd_sym_data_struct *sdata = NULL;
+ 
+   parser = NULL;
+diff --git a/include/coff/internal.h b/include/coff/internal.h
+index c96ac58e..dd2743ee 100644
+--- a/include/coff/internal.h
++++ b/include/coff/internal.h
+@@ -65,9 +65,9 @@ struct internal_filehdr
+   /* Standard coff internal info.  */
+   unsigned short f_magic;	/* magic number			*/
+   unsigned int   f_nscns;	/* number of sections		*/
+-  long f_timdat;		/* time & date stamp		*/
++  int f_timdat;		/* time & date stamp		*/
+   bfd_vma f_symptr;		/* file pointer to symtab	*/
+-  long f_nsyms;			/* number of symtab entries	*/
++  int f_nsyms;			/* number of symtab entries	*/
+   unsigned short f_opthdr;	/* sizeof(optional hdr)		*/
+   unsigned short f_flags;	/* flags			*/
+   unsigned short f_target_id;	/* (TI COFF specific)		*/
+diff --git a/include/libiberty.h b/include/libiberty.h
+index 32385911..23e9e31e 100644
+--- a/include/libiberty.h
++++ b/include/libiberty.h
+@@ -729,14 +729,9 @@ extern void stack_limit_increase (unsigned long);
+    to call alloca(0).  */
+ extern void *C_alloca (size_t) ATTRIBUTE_MALLOC;
+ #undef alloca
+-#if GCC_VERSION >= 2000 && !defined USE_C_ALLOCA
++#if 1 //GCC_VERSION >= 2000 && !defined USE_C_ALLOCA
+ # define alloca(x) __builtin_alloca(x)
+ # undef C_ALLOCA
+-# define ASTRDUP(X) \
+-  (__extension__ ({ const char *const libiberty_optr = (X); \
+-   const unsigned long libiberty_len = strlen (libiberty_optr) + 1; \
+-   char *const libiberty_nptr = (char *) alloca (libiberty_len); \
+-   (char *) memcpy (libiberty_nptr, libiberty_optr, libiberty_len); }))
+ #else
+ # define alloca(x) C_alloca(x)
+ # undef USE_C_ALLOCA

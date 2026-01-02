@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets">
+  </ImportGroup>
+  <PropertyGroup>
+    <IncludePath>$(VSInstallDir)DIA SDK\include;D:\dev.down\myext\include;D:\work\utilwin\inc_win;X:\tools\Python312\include;X:\tools\Python310\include;$(IncludePath)</IncludePath>
+    <IntDir>D:\temp\vs_tmp\$(ProjectName)_$(Configuration)_$(Platform)_$(ProjectGuid)\</IntDir>
+    <LibraryPath>D:\dev.down\myext\$(Configuration)_lib;X:\tools\Python312\libs;X:\tools\Python310\libs;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ClCompile>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>

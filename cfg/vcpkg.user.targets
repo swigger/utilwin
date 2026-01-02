@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <VcpkgPageSchema Condition="'$(VcpkgPageSchema)' == ''">$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg-general.xml</VcpkgPageSchema>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(VcpkgPageSchema)' != '' and exists('$(VcpkgPageSchema)') and '$(MSBuildToolsVersion)' != '14.0'">
+    <PropertyPageSchema Include="$(VcpkgPageSchema)">
+      <Context>Project</Context>
+    </PropertyPageSchema>
+  </ItemGroup>
+  <PropertyGroup>
+    <IncludePath Condition="'$(VcpkgEnabled)' == 'true'">$(IncludePath);$(VcpkgRoot)installed\$(VcpkgPlatform)-windows-static\include;$(VcpkgRoot)installed\$(VcpkgPlatform)-windows\include</IncludePath>
+    <LibraryPath Condition="'$(VcpkgEnabled)' == 'true'">$(LibraryPath);$(VcpkgRoot)installed\$(VcpkgPlatform)-windows-static\$(DebugDirString)lib;$(VcpkgRoot)installed\$(VcpkgPlatform)-windows\$(DebugDirString)lib</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalDependencies Condition="'$(VcpkgEnabled)' == 'true'">$(MyVcPkgDefaultLibs);%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ClCompile>
+      <PreprocessorDefinitions Condition="'$(VcpkgEnabled)' == 'true'">$(MyVcPkgMacros);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+</Project>

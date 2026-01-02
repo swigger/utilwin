@@ -1,0 +1,65 @@
+SRC_FILES:=$(shell cat msvc/src.txt)
+SRC_FILES2=bfd/pei-aarch64.c bfd/pei-loongarch64.c bfd/elf32-aarch64.c bfd/elf32-loongarch.c bfd/elf32-v850.c \
+		   bfd/elf64-aarch64.c bfd/elf64-bpf.c bfd/elf64-loongarch.c bfd/elfxx-loongarch.c bfd/elfxx-riscv.c \
+		   bfd/xtensa-modules.c
+INDIR?=binutils-2.42
+CFLAGS_COMMON=-nologo -Imsvc -I"$(INDIR)/include" -I"$(INDIR)/zlib" -I"$(INDIR)/bfd" -I"$(INDIR)/libctf" $(VCPKG_INC) -FS -W3 \
+  -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS -DHAVE_CONFIG_H /utf-8
+CFLAGS_D=$(CFLAGS_COMMON) -MDd -Zi -Od -D_DEBUG -DDEBUG
+CFLAGS_R=$(CFLAGS_COMMON) -MD -Zi -O2 -Oi -GL -GF
+LIB_D=lib/debug/libbfd.lib
+LIB_R=lib/release/libbfd.lib
+OBJ_FILES_D=$(patsubst %,obj/debug/%.obj,$(SRC_FILES)) $(patsubst %,obj/debug/%_clang.obj,$(SRC_FILES2))
+OBJ_FILES_R=$(patsubst %,obj/release/%.obj,$(SRC_FILES)) $(patsubst %,obj/release/%_clang.obj,$(SRC_FILES2))
+DIRS=$(sort $(dir $(OBJ_FILES_D)) $(dir $(OBJ_FILES_R)) $(dir $(LIB_D)) $(dir $(LIB_R)))
+
+VCPKGBASE:=$(wildcard $(shell Get-Content $$Env:LocalAppData/vcpkg/vcpkg.path.txt))
+VCPKG_INC=/I$(VCPKGBASE)/installed/x64-windows-static/include /I$(VCPKGBASE)/installed/x64-windows/include
+VCPKG_LIB=/LIBPATH:$(VCPKGBASE)/installed/x64-windows-static/lib /LIBPATH:$(VCPKGBASE)/installed/x64-windows/lib
+
+all: all_d all_r
+all_d:$(LIB_D)
+all_r:$(LIB_R)
+
+$(DIRS):
+	$$nullout = New-Item -ItemType Directory -Force -Path $@
+dirs:|$(DIRS)
+
+obj/debug/%.c.obj: $(INDIR)/%.c
+	cl $(CFLAGS_D) /c /Fo$@ $<
+obj/debug/%.c.obj: ./%.c
+	cl $(CFLAGS_D) /c /Fo$@ $<
+obj/debug/%.c_clang.obj: $(INDIR)/%.c
+	clang-cl $(CFLAGS_D) /c /Fo$@ $<
+$(LIB_D): dirs $(OBJ_FILES_D)
+	lib /nologo /out:$@ $(OBJ_FILES_D)
+
+obj/release/%.c.obj: $(INDIR)/%.c
+	cl $(CFLAGS_R) /c /Fo$@ $<
+obj/release/%.c.obj: ./%.c
+	cl $(CFLAGS_R) /c /Fo$@ $<
+obj/release/%.c_clang.obj: $(INDIR)/%.c
+	clang-cl $(CFLAGS_R) /c /Fo$@ $<
+$(LIB_R): dirs $(OBJ_FILES_R)
+	lib /nologo /out:$@ $(OBJ_FILES_R)
+
+clean:
+	-Remove-Item -Force -Recurse lib,obj ; $$no=0
+
+
+DESTDIR=D:\dev.down\myext
+CP_HEADERS=ansidecl.h bfdlink.h ctf-api.h ctf.h diagnostics.h dis-asm.h plugin-api.h sframe-api.h sframe.h symcat.h
+
+install:
+	-@ $$nullout = New-Item -ItemType Directory -Force -Path $(DESTDIR)/include/
+	-@ $$nullout = New-Item -ItemType Directory -Force -Path $(DESTDIR)/debug_lib/
+	-@ $$nullout = New-Item -ItemType Directory -Force -Path $(DESTDIR)/release_lib/
+	Copy-Item -Path $(comma_list $(addprefix $(INDIR)/include/,$(sort $(CP_HEADERS)))) -Destination $(DESTDIR)/include/
+	Copy-Item -Path msvc/bfd.h -Destination $(DESTDIR)/include/
+	Copy-Item -Path $(LIB_R) -Destination $(DESTDIR)/release_lib/
+	Copy-Item -Path $(LIB_D) -Destination $(DESTDIR)/debug_lib/
+
+info:
+	@echo $(VCPKGBASE)
+
+.PHONY: all all_d all_r dirs clean install

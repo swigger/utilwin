@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="UserMacros">
+    <VcpkgRoot Condition="'$(VcpkgRoot)' == ''">$([System.IO.File]::ReadAllText('$(LOCALAPPDATA)\vcpkg\vcpkg.path.txt').Trim())\</VcpkgRoot>
+    <VcpkgEnabled Condition="'$(VcpkgEnabled)' == ''">true</VcpkgEnabled>
+    <VcpkgUseStatic Condition="'$(VcpkgUseStatic)' == ''">true</VcpkgUseStatic>
+    <VcpkgAutoLink>false</VcpkgAutoLink>
+    <MyVcPkgDefaultLibs>ntdll.lib;utilwin.lib</MyVcPkgDefaultLibs>
+    <MyVcPkgMacros>USES_UTILWIN</MyVcPkgMacros>
+    <DebugDirString />
+    <DebugDirString Condition="'$(Configuration)' == 'Debug'">debug\</DebugDirString>
+    <VcpkgPlatform>x64</VcpkgPlatform>
+    <VcpkgPlatform Condition="'$(Platform)'=='Win32'">x86</VcpkgPlatform>
+  </PropertyGroup>
+</Project>

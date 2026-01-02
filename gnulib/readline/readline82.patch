@@ -1,0 +1,52 @@
+diff --git a/complete.c b/complete.c
+index e5d224e..4605c02 100644
+--- a/complete.c
++++ b/complete.c
+@@ -2460,7 +2460,7 @@ rl_filename_completion_function (const char *text, int state)
+   static char *dirname = (char *)NULL;
+   static char *users_dirname = (char *)NULL;
+   static int filename_len;
+-  char *temp, *dentry, *convfn;
++  char *temp, *dentry=0, *convfn=0;
+   int dirlen, dentlen, convlen;
+   int tilde_dirname;
+   struct dirent *entry;
+diff --git a/input.c b/input.c
+index 5f03aba..14d0fe1 100644
+--- a/input.c
++++ b/input.c
+@@ -801,7 +801,7 @@ rl_read_key (void)
+ }
+ 
+ int
+-rl_getc (FILE *stream)
++rl_getc1 (FILE *stream)
+ {
+   int result;
+   unsigned char c;
+diff --git a/tilde.c b/tilde.c
+index d678a31..3a4767d 100644
+--- a/tilde.c
++++ b/tilde.c
+@@ -354,7 +354,7 @@ tilde_expand_word (const char *filename)
+       expansion = sh_get_env_value ("HOME");
+ #if defined (_WIN32)
+       if (expansion == 0)
+-	expansion = sh_get_env_value ("APPDATA");
++	expansion = sh_get_env_value ("USERPROFILE");
+ #endif
+ 
+       /* If there is no HOME variable, look up the directory in
+diff --git a/undo.c b/undo.c
+index e4c457d..2c20057 100644
+--- a/undo.c
++++ b/undo.c
+@@ -137,7 +137,7 @@ _rl_copy_undo_entry (UNDO_LIST *entry)
+ UNDO_LIST *
+ _rl_copy_undo_list (UNDO_LIST *head)
+ {
+-  UNDO_LIST *list, *new, *roving, *c;
++  UNDO_LIST *list, *new, *roving = 0, *c =0;
+ 
+   if (head == 0)
+     return head;
