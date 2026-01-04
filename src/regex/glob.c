@@ -36,7 +36,7 @@ static int is_literal(const char *p, int useesc)
 	return 1;
 }
 
-static int append(struct match **tail, const char *name, size_t len, int mark)
+static int append(struct match **tail, const char *name, size_t len, _Bool mark)
 {
 	struct match *new = malloc(sizeof(struct match) + len + 1);
 	if (!new) return -1;
@@ -78,7 +78,7 @@ static int match_in_dir(const char *d, const char *p, int flags, int (*errfunc)(
 		if (error == EACCES && !*p) {
 			struct stat st;
 			if (!stat(d, &st) && S_ISDIR(st.st_mode)) {
-				if (append(tail, d, l, l))
+				if (append(tail, d, l, !!l))
 					return GLOB_NOSPACE;
 				return 0;
 			}
@@ -88,7 +88,7 @@ static int match_in_dir(const char *d, const char *p, int flags, int (*errfunc)(
 		return 0;
 	}
 	if (!*p) {
-		error = append(tail, d, l, l) ? GLOB_NOSPACE : 0;
+		error = append(tail, d, l, !!l) ? GLOB_NOSPACE : 0;
 		closedir(dir);
 		return error;
 	}

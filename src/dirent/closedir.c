@@ -17,6 +17,7 @@
 #include "__build.h"
 #include <dirent.h>
 #include "__dirent.h"
+#include <stdlib.h>
 
 int closedir(DIR *dir)
 {

@@ -2684,7 +2684,7 @@ RtlInitCodePageTable(
     _Inout_ PCPTABLEINFO CodePageTable
     );
 
-#if (PHNT_VERSION < PHNT_WINDOWS_11)
+// #if (PHNT_VERSION < PHNT_WINDOWS_11)
 NTSYSAPI
 VOID
 NTAPI
@@ -2694,7 +2694,7 @@ RtlInitNlsTables(
     _In_ PUSHORT LanguageNlsBase,
     _Out_ PNLSTABLEINFO TableInfo // PCPTABLEINFO?
     );
-#endif
+// #endif
 
 NTSYSAPI
 VOID

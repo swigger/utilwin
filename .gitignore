@@ -1,3 +1,7 @@
+out/
+.vs/
+.DS_Store
+
 *.obj
 *.lib
 *.pdb

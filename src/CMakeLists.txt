@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.11)
+cmake_minimum_required (VERSION 3.11.0)
 project (utilwin)
 
 # message(STATUS "xx src is ${CMAKE_CURRENT_SOURCE_DIR}")
@@ -47,5 +47,6 @@ macro(configure_link_flags)
 endmacro()
 
 if(MSVC)
+	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 	configure_link_flags()
 endif()

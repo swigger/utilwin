@@ -42,7 +42,7 @@ int scandir(const char *path, struct dirent ***res,
 
 	if (cmp) qsort(names, cnt, sizeof *names, (int (*)(const void *, const void *))cmp);
 	*res = names;
-	return cnt;
+	return (int) cnt;
 }
 
 LFS64(scandir);

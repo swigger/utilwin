@@ -235,4 +235,8 @@ typedef const GUID* PCGUID;
 DEFINE_GUID(GUID_NULL, 0x00000000L, 0x0000, 0x0000, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
 #endif
 
+#ifndef FASTCALL
+#define FASTCALL __fastcall
+#endif
+
 #endif

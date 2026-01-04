@@ -1,4 +1,5 @@
 #include <__build.h>
+#include <__ntenv.h>
 #include <stdio.h>
 #include <errno.h>
 
@@ -152,7 +153,7 @@ int geterrno_from_win_error(DWORD code, int deferrno)
 	return deferrno;  /* FIXME: what's so special about EACCESS? */
 }
 
-void __seterrno_from_nt_status(NTSTATUS status)
+void __seterrno_from_nt_status(long status)
 {
 	DWORD code = RtlNtStatusToDosError(status);
 	SetLastError(code);

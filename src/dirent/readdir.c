@@ -15,11 +15,11 @@
  */
 
 #include <__build.h>
+#include <__ntenv.h>
 #define _GNU_SOURCE 1
 #include <dirent.h>
 #include <errno.h>
 #include <stddef.h>
-#include <ndk/ntndk.h>
 #include <assert.h>
 #include "__dirent.h"
 
@@ -56,9 +56,9 @@ struct dirent *readdir(DIR *dir)
 	assert(q > 0);
 	de->d_name[q] = 0;
 	//de->d_namlen = q;
-	de->d_reclen = sizeof(struct dirent) - sizeof(de->d_name) + q+1;
+	de->d_reclen = (unsigned short)(sizeof(struct dirent) - sizeof(de->d_name) + q+1);
 	de->d_reclen = (de->d_reclen + 7) & ~7;
-	dir->ub_index = (char*)fdi + fdi->NextEntryOffset - dir->uni_buffer;
+	dir->ub_index = (unsigned short)((char*)fdi + fdi->NextEntryOffset - dir->uni_buffer);
 	if (fdi->NextEntryOffset == 0)
 	{
 		dir->ub_index = dir->ub_len;

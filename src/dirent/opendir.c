@@ -16,6 +16,7 @@
 
 #define _GNU_SOURCE
 #include <__build.h>
+#include <__ntenv.h>
 #include <dirent.h>
 #include <fcntl.h>
 #include <stdlib.h>

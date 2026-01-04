@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-#include <Windows.h>
+#include <__ntenv.h>
+#include <stdio.h>
 #include <stdint.h>
-#include <ndk/ntndk.h>
 #include <setjmp.h>
 #include <io.h>
 #include <assert.h>
 #include "unistd_uw.h"
+
+#define RTL_CLONE_PARENT                                0
+#define RTL_CLONE_CHILD                                 297
 
 #define VAL(type, mod, addr) (*(type*)((char*)mod+addr))
 
@@ -362,7 +365,7 @@ int fork(void)
 	SetHandleInformation(GetStdHandle(STD_ERROR_HANDLE), HANDLE_FLAG_INHERIT, HANDLE_FLAG_INHERIT);
 	GetCurrentDirectory(MAX_PATH, cwd);
 
-	process_info.Size = sizeof(process_info);
+	process_info.Length = sizeof(process_info);
 	st = RtlCloneUserProcess(RTL_CLONE_PROCESS_FLAGS_CREATE_SUSPENDED | RTL_CLONE_PROCESS_FLAGS_INHERIT_HANDLES, NULL, NULL, NULL, &process_info);
 	if (st == RTL_CLONE_PARENT)
 	{

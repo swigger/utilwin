@@ -1,11 +1,10 @@
+#include <__ntenv.h>
 #include <tchar.h>
-#include <Windows.h>
 #include <locale.h>
 #include <stdint.h>
 #include <malloc.h>
 #include <crtdbg.h>
 #include <process.h>
-#include <ndk/ntndk.h>
 #include "unistd_uw.h"
 #pragma section(".CRT$XIA5",    long, read) // First C Initializer
 #define _CRTALLOC(x) __declspec(allocate(x))
@@ -91,8 +90,12 @@ static int early_patch_utf8()
 {
 #ifdef _M_IX86
 	PPEB peb = (PPEB)__readfsdword(0x30);
-#else
+#elif defined(_M_AMD64)
 	PPEB peb = (PPEB)__readgsqword(0x60);
+#elif defined(_M_ARM64)
+	PPEB peb = ((PPEB*)__getReg(18))[0x60/8];
+#else
+	PPEB peb = NtCurrentPeb();
 #endif
 	peb->AnsiCodePageData = 0;
 	peb->OemCodePageData = 0;
@@ -154,7 +157,7 @@ static int early_patch_utf8()
 
 _CRTALLOC(".CRT$XIA5") void* call_early_patch_utf8 = &early_patch_utf8;
 
-void uw_enable_utf8()
+void uw_enable_utf8(void)
 {
 	SetConsoleCP(CP_UTF8);
 	SetConsoleOutputCP(CP_UTF8);

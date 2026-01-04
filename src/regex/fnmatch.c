@@ -126,8 +126,8 @@ static int match_bracket(const char *p, int k, int kfold)
 			int l = mbtowc(&wc2, p+1, 4);
 			if (l < 0) return 0;
 			if (wc <= wc2)
-				if ((unsigned)k-wc <= wc2-wc ||
-				    (unsigned)kfold-wc <= wc2-wc)
+				if ((unsigned)(k-wc) <= (unsigned)(wc2-wc) ||
+				    (unsigned)(kfold-wc) <= (unsigned)(wc2-wc))
 					return !inv;
 			p += l-1;
 			continue;
