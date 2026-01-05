@@ -43,8 +43,3 @@ int sched_yield(void)
 	NTSTATUS nt = NtDelayExecution(TRUE, &delay);
 	return conv_ntstatus(nt);
 }
-
-pid_t gettid()
-{
-	return GetCurrentThreadId();
-}
