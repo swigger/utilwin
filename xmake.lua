@@ -23,4 +23,5 @@ target("utilwin")
     
     add_headerfiles("src/include/*.h", {prefixdir = ""})
     add_headerfiles("src/process/unistd_uw.h", {prefixdir = ""})
+    add_headerfiles("src/process/disasmlen.h", {prefixdir = ""})
     add_headerfiles("src/win32u/win32_u.h", {prefixdir = ""})
