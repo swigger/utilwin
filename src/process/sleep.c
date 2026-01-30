@@ -1,12 +1,5 @@
-#include <Windows.h>
-#include <winternl.h>
-#include <stdint.h>
-#include <errno.h>
+#include <__ntenv.h>
 #include "unistd_uw.h"
-
-#ifndef STATUS_ALERTED
-#define STATUS_ALERTED 0x101
-#endif
 
 NTSYSAPI NTSTATUS NTAPI NtDelayExecution(BOOLEAN Alertable, PLARGE_INTEGER DelayInterval);
 

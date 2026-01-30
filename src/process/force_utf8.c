@@ -157,13 +157,14 @@ static int early_patch_utf8()
 
 _CRTALLOC(".CRT$XIA5") void* call_early_patch_utf8 = &early_patch_utf8;
 
-void uw_enable_utf8(void)
+void uw_enable_utf8(void* unused)
 {
 	SetConsoleCP(CP_UTF8);
 	SetConsoleOutputCP(CP_UTF8);
 	setlocale(LC_ALL, "en_US.UTF-8");
 	void* volatile val = &call_early_patch_utf8;
 	(void)val;
+	(void)unused;
 }
 
 /*

@@ -9,3 +9,6 @@ out/
 *.tar.xz
 *.tar.gz
 *.tar.bz2
+
+.xmake/
+build/
