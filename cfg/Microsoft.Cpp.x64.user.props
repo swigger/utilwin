@@ -3,9 +3,9 @@
   <ImportGroup Label="PropertySheets">
   </ImportGroup>
   <PropertyGroup>
-    <IncludePath>$(VSInstallDir)DIA SDK\include;D:\dev.down\myext\include;D:\work\utilwin\inc_win;X:\tools\Python312\include;X:\tools\Python310\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(VSInstallDir)DIA SDK\include;D:\dev.down\myext\include;D:\work\utilwin\inc_win;$(LocalAppdata)\Python\pythoncore-3.14-64\include;X:\tools\Python312\include;$(IncludePath)</IncludePath>
     <IntDir>D:\temp\vs_tmp\$(ProjectName)_$(Configuration)_$(Platform)_$(ProjectGuid)\</IntDir>
-    <LibraryPath>D:\dev.down\myext\$(Configuration)_lib;X:\tools\Python312\libs;X:\tools\Python310\libs;$(LibraryPath)</LibraryPath>
+    <LibraryPath>D:\dev.down\myext\$(Configuration)_lib;$(LocalAppdata)\Python\pythoncore-3.14-64\libs;X:\tools\Python312\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
